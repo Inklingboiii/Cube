@@ -42,6 +42,7 @@ function createCubeState() {
     ];
 }
 
+let colorMap = [0xffffff, 0x33FF33, 0xffdd33, 0x3344ff, 0xff0000, 0xff8833];
 function turnR(state) {
     return state.map((side, sideIndex) => {
         // exclude left and right sides that dont get changed
@@ -78,4 +79,4 @@ function turnF(state) {
     });
 }
 
-export {createCubeState, turnR, turnL, turnF}
+export {createCubeState, turnR, turnL, turnF, colorMap}

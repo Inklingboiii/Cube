@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createCubeState, turnR, turnL, turnF } from './cube-state';
+import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
 console.table(cubeState)
 
@@ -14,6 +14,8 @@ scene.add(cube);
 
 camera.position.z = 100;
 
+animate();
+
 function animate() {
 	requestAnimationFrame( animate );
 
@@ -23,13 +25,12 @@ function animate() {
 	renderer.render( scene, camera );
 }
 
-animate();
-
 function createCube(state) {
-    const count = state.flat(3).length
+    let flattenedState = state.flat(3);
+    const count = flattenedState.length
     console.log(count)
     const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    const material = new THREE.MeshBasicMaterial({color: 0xffffff});
     const cube = new THREE.InstancedMesh( geometry, material, count);
     // Used to position all instances with its .matrix
     const positionalObject = new THREE.Object3D();
@@ -39,7 +40,9 @@ function createCube(state) {
         positionalObject.updateMatrix();
         cube.setMatrixAt(index, positionalObject.matrix);
         //console.log(JSON.parse(JSON.stringify(positionalObject.matrix)))
-        
+        console.log(colorMap[flattenedState[index]])
+        cube.setColorAt(index, new THREE.Color(colorMap[flattenedState[index]]));
     }
+    cube.instanceColor.needsUpdate = true;
     return cube;
 }
