@@ -39,8 +39,6 @@ function createCube(state) {
         positionalObject.position.set(Math.random() * 50, Math.random() * 50, Math.random() * 50);
         positionalObject.updateMatrix();
         cube.setMatrixAt(index, positionalObject.matrix);
-        //console.log(JSON.parse(JSON.stringify(positionalObject.matrix)))
-        console.log(colorMap[flattenedState[index]])
         cube.setColorAt(index, new THREE.Color(colorMap[flattenedState[index]]));
     }
     cube.instanceColor.needsUpdate = true;
