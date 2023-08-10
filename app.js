@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
+cubeState = turnR(cubeState)
 console.table(cubeState)
 
 const scene = new THREE.Scene();
@@ -13,7 +14,8 @@ document.body.appendChild( renderer.domElement );
 let cube = createCube(cubeState);
 scene.add(cube);
 
-camera.position.z = 50;
+camera.position.z = 10;
+camera.position.y = 3;
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.update()
 
@@ -41,16 +43,30 @@ function createCube(solvedState) {
             const rowLength = solvedState[0].length;
             const row = Math.floor(cell / rowLength);
             const col = cell % rowLength;
-            positionalObject.position.set(Math.random() * 50, Math.random() * 50, Math.random() * 50);
             positionalObject.rotation.x = 0;
-            if (side == 1) {
-                positionalObject.position.set(col,rowLength - row, 0);
-                positionalObject.rotateX(0)
-            } else if (side == 0) {
+            positionalObject.rotation.y = 0;
+            if (side === 0) {
                 // Adjust the position due to the rotation
                 positionalObject.position.set(col, rowLength + stickerSize / 2, -rowLength + row + stickerSize / 2);
-                console.log('rotated')
                 positionalObject.rotateX(Math.PI / 2)
+            } else if (side === 1) {
+                positionalObject.position.set(col,rowLength - row, 0);
+                positionalObject.rotateX(0)
+            } else if(side === 2) {
+                positionalObject.position.set(col, 0 + stickerSize / 2, -rowLength + row + stickerSize / 2);
+                positionalObject.rotateX(Math.PI / 2)
+            }
+            else if (side === 3) {
+                positionalObject.position.set(col,rowLength - row, -rowLength);
+                positionalObject.rotateX(0)
+            }
+            else if (side === 4) {
+                positionalObject.position.set(rowLength - stickerSize / 2, rowLength - row, -col - stickerSize / 2);
+                positionalObject.rotateY(Math.PI / 2)
+            }
+            else if (side === 5) {
+                positionalObject.position.set(-stickerSize / 2, rowLength - row, -col - stickerSize / 2);
+                positionalObject.rotateY(Math.PI / 2)
             }
             console.log(positionalObject.rotation.x)
             positionalObject.updateMatrix();
@@ -59,6 +75,7 @@ function createCube(solvedState) {
         }
     }
     cube.instanceColor.needsUpdate = true;
-    console.log(cube)
+    cube.rotation.x = 0.5
+    cube.rotation.y = -0.5;
     return cube;
 }
