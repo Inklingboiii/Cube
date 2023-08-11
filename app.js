@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
 cubeState = turnL(cubeState);
+cubeState = turnR(cubeState);
 console.table(cubeState)
 
 const scene = new THREE.Scene();
@@ -34,6 +36,7 @@ function createCube(solvedState) {
     const geometry = new THREE.PlaneGeometry(stickerSize, stickerSize, stickerSize);
     const material = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
     const cube = new THREE.InstancedMesh( geometry, material, count);
+    let list = [];
     // Used to position all instances with its .matrix
     const positionalObject = new THREE.Object3D();
     positionalObject.geometry = geometry;
@@ -69,15 +72,20 @@ function createCube(solvedState) {
                 positionalObject.position.set(-stickerSize / 2, rowLength - row, -col - stickerSize / 2);
                 positionalObject.rotateY(Math.PI / 2)
             }
-            console.log(positionalObject.rotation.x)
             positionalObject.updateMatrix();
             cube.setMatrixAt(index, positionalObject.matrix);
             cube.setColorAt(index, new THREE.Color(colorMap[solvedState[side][row][col]]));
+            list.push(new THREE.BufferGeometry().copy(geometry).applyMatrix4(positionalObject.matrix));
         }
     }
     cube.instanceColor.needsUpdate = true;
     cube.rotation.x = 0.5
     cube.rotation.y = -0.5;
+    console.log(list)
+    const fusion = BufferGeometryUtils.mergeGeometries(list);
+    const line = new THREE.Line(fusion, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
+    cube.add(line)
+    //scene.add( line );
     return cube;
 }
 
