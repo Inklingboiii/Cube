@@ -44,24 +44,30 @@ function createCubeState() {
 
 let colorMap = [0xffffff, 0x33FF33, 0xffdd33, 0x3344ff, 0xff0000, 0xff8833];
 function turnR(state) {
-    console.log('input', state)
+    let stateCopy = JSON.parse(JSON.stringify(state))
     return state.map((side, sideIndex) => {
         // exclude left and right sides that dont get changed
         if (sideIndex === 4 || sideIndex === 5) return side
         return side.map((row, rowIndex) => {
             // Modulus operator so it wraps around
-            row[2] = state[(sideIndex + 1) % state.length][rowIndex][2];
+            console.table(JSON.parse(JSON.stringify(state)))
+            if (sideIndex === 3) row[2] = stateCopy[0][rowIndex][2];
+            else row[2] = state[(sideIndex + 1) % state.length][rowIndex][2];
             return row;
         })
     });
 }
 
 function turnL(state) {
+    let stateCopy = JSON.parse(JSON.stringify(state))
     return state.map((side, sideIndex) => {
         // exclude left and right sides that dont get changed
         if (sideIndex === 4 || sideIndex === 5) return side
         return side.map((row, rowIndex) => {
-            row[0] = state[(sideIndex + 1) % state.length][rowIndex][0];
+            // Modulus operator so it wraps around
+            console.table(JSON.parse(JSON.stringify(state)))
+            if (sideIndex === 3) row[0] = stateCopy[0][rowIndex][0];
+            else row[0] = state[(sideIndex + 1) % state.length][rowIndex][0];
             return row;
         })
     });
