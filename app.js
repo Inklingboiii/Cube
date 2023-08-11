@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
-cubeState = turnR(cubeState)
+cubeState = turnL(cubeState);
 console.table(cubeState)
 
 const scene = new THREE.Scene();
@@ -22,6 +22,7 @@ controls.update()
 animate();
 
 function animate() {
+    //recolorCube(cubeState)
 	requestAnimationFrame( animate );
 	renderer.render( scene, camera );
 }
@@ -78,4 +79,9 @@ function createCube(solvedState) {
     cube.rotation.x = 0.5
     cube.rotation.y = -0.5;
     return cube;
+}
+
+function recolorCube(state) {
+    let flattenedState = state.flat(3);
+    flattenedState.forEach((cell, index) => cube.setColorAt(index, new THREE.Color(colorMap[cell])));
 }

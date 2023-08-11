@@ -44,9 +44,10 @@ function createCubeState() {
 
 let colorMap = [0xffffff, 0x33FF33, 0xffdd33, 0x3344ff, 0xff0000, 0xff8833];
 function turnR(state) {
+    console.log('input', state)
     return state.map((side, sideIndex) => {
         // exclude left and right sides that dont get changed
-        if (sideIndex === 4 || 5) return side
+        if (sideIndex === 4 || sideIndex === 5) return side
         return side.map((row, rowIndex) => {
             // Modulus operator so it wraps around
             row[2] = state[(sideIndex + 1) % state.length][rowIndex][2];
@@ -58,10 +59,9 @@ function turnR(state) {
 function turnL(state) {
     return state.map((side, sideIndex) => {
         // exclude left and right sides that dont get changed
-        if (sideIndex === 4 || sideIndex == 5) return side
+        if (sideIndex === 4 || sideIndex === 5) return side
         return side.map((row, rowIndex) => {
-            // add before using modules so its positive
-            row[0] = state[(sideIndex - 1 + state.length) % state.length][rowIndex][0];
+            row[0] = state[(sideIndex + 1) % state.length][rowIndex][0];
             return row;
         })
     });
