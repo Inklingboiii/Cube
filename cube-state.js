@@ -64,8 +64,9 @@ function turnL(state) {
         if (sideIndex === 4 || sideIndex === 5) return side
         return side.map((row, rowIndex) => {
             // Modulus operator so it wraps around
-            if (sideIndex === 3) row[0] = stateCopy[0][rowIndex][0];
-            else row[0] = state[(sideIndex + 1) % state.length][rowIndex][0];
+            //if (sideIndex === 3) row[0] = stateCopy[0][rowIndex][0];
+            if (sideIndex === 0) row[0] = state[3][rowIndex][0]
+            else row[0] = stateCopy[sideIndex - 1][rowIndex][0];
             return row;
         })
     });

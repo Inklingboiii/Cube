@@ -4,7 +4,6 @@ import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
 cubeState = turnL(cubeState);
-cubeState = turnR(cubeState);
 console.table(cubeState)
 
 const scene = new THREE.Scene();
