@@ -10,7 +10,7 @@ console.table(cubeState)
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 let cube = createCube(cubeState);
@@ -36,10 +36,8 @@ function createCube(solvedState) {
     const geometry = new THREE.PlaneGeometry(stickerSize, stickerSize, stickerSize);
     const material = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
     const cube = new THREE.InstancedMesh( geometry, material, count);
-    let list = [];
     // Used to position all instances with its .matrix
     const positionalObject = new THREE.Object3D();
-    positionalObject.geometry = geometry;
     for (let side = 0; side < solvedState.length; side++) {
         // Flatten the rows
         for (let cell = 0; cell < solvedState[0].flat().length; cell++) {
@@ -75,17 +73,15 @@ function createCube(solvedState) {
             positionalObject.updateMatrix();
             cube.setMatrixAt(index, positionalObject.matrix);
             cube.setColorAt(index, new THREE.Color(colorMap[solvedState[side][row][col]]));
-            list.push(new THREE.BufferGeometry().copy(geometry).applyMatrix4(positionalObject.matrix));
+            const edges = new THREE.EdgesGeometry( geometry ); 
+            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000, linewidth: 5 } )); 
+            line.applyMatrix4(positionalObject.matrix)
+            cube.add( line );
         }
     }
     cube.instanceColor.needsUpdate = true;
     cube.rotation.x = 0.5
     cube.rotation.y = -0.5;
-    console.log(list)
-    const fusion = BufferGeometryUtils.mergeGeometries(list);
-    const line = new THREE.Line(fusion, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
-    cube.add(line)
-    //scene.add( line );
     return cube;
 }
 
