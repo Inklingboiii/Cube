@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
 let cubeState = createCubeState();
+cubeState = turnF(cubeState);
 cubeState = turnL(cubeState);
 console.table(cubeState)
 
@@ -66,7 +66,7 @@ function createCube(solvedState) {
                 positionalObject.rotateY(Math.PI / 2)
             }
             else if (side === 5) {
-                positionalObject.position.set(-stickerSize / 2, rowLength - row, -col - stickerSize / 2);
+                positionalObject.position.set(-stickerSize / 2, rowLength - row, col - rowLength + stickerSize / 2);
                 positionalObject.rotateY(Math.PI / 2)
             }
             positionalObject.updateMatrix();
