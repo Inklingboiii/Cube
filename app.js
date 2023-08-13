@@ -3,10 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createCubeState, colorMap, turnWithMap } from './cube-state';
 import turnMaps from './turnMaps';
 let cubeState = createCubeState();
-cubeState = turnWithMap(cubeState, turnMaps.l)
-cubeState = turnWithMap(cubeState, turnMaps.f)
-cubeState = turnWithMap(cubeState, turnMaps.r)
-cubeState = turnWithMap(cubeState, turnMaps.f)
+
 cubeState = turnWithMap(cubeState, turnMaps.r)
 
 console.log("final rendered state")
