@@ -1,10 +1,17 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createCubeState, turnR, turnL, turnF, colorMap } from './cube-state';
+import { createCubeState, turnR, turnL, turnF, colorMap, turnMap } from './cube-state';
 let cubeState = createCubeState();
-cubeState = turnF(cubeState);
-cubeState = turnL(cubeState);
-console.table(cubeState)
+cubeState = turnMap(cubeState)
+cubeState = turnF(cubeState)
+cubeState = turnF(cubeState)
+cubeState = turnMap(cubeState)
+cubeState = turnMap(cubeState)
+
+
+
+console.log("final rendered state")
+console.table(JSON.parse(JSON.stringify(cubeState)))
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -54,11 +61,11 @@ function createCube(solvedState) {
                 positionalObject.position.set(col,rowLength - row, 0);
                 positionalObject.rotateX(0)
             } else if(side === 2) {
-                positionalObject.position.set(col, 0 + stickerSize / 2, -rowLength + row + stickerSize / 2);
+                positionalObject.position.set(col, 0 + stickerSize / 2, -row - stickerSize / 2);
                 positionalObject.rotateX(Math.PI / 2)
             }
             else if (side === 3) {
-                positionalObject.position.set(col,rowLength - row, -rowLength);
+                positionalObject.position.set(-col + rowLength - stickerSize,rowLength - row, -rowLength);
                 positionalObject.rotateX(0)
             }
             else if (side === 4) {
