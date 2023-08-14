@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createCubeState, colorMap, turnWithMap } from './cube-state';
+import { createCubeState, colorMap, turnWithMap, generateRandomState, solveState } from './cube-state';
 import turnMaps from './turnMaps';
 let cubeState = createCubeState();
 
-cubeState = turnWithMap(cubeState, turnMaps.r)
+cubeState = generateRandomState(cubeState)
+solveState(cubeState)
 
 console.log("final rendered state")
 console.table(JSON.parse(JSON.stringify(cubeState)))
