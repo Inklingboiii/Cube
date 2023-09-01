@@ -96,7 +96,7 @@ function generateRandomState(state) {
     // https://stackoverflow.com/questions/2532218/pick-random-property-from-a-javascript-object
     let possibleTurns = Object.keys(turnMaps);
     let turnsList = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         let turnKey = possibleTurns[Math.floor(possibleTurns.length * Math.random())];
         let amount = Math.floor(Math.random() * 3) + 1;
         state = turnWithMap(state, turnMaps[turnKey], amount)
@@ -109,46 +109,66 @@ function generateRandomState(state) {
 function solveState(state) {
     let solvedState = createCubeState();
     let statesQueue = [];
-    let resolvedQueue = []
+    let statesQueueBackwards = []
+    let resolvedQueue = [];
+    let resolvedQueueBackwards = [];
     resolvedQueue.push({turn: null,amount: 0, index: -1});
+    resolvedQueueBackwards.push({turn: null,amount: 0, index: -1});
     let solvedStateFound = false;
 
     for (const turnKey in turnMaps) {
         for (let i = 0; i < 3; i++) {
             statesQueue.push({turn: turnKey, amount: i+1, index: 0});
+            statesQueueBackwards.push({turn: turnKey, amount: i+1, index: 0});
         }
     }
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 10000; i++) {
         if(solvedStateFound) break;
         const referenceIndex = resolvedQueue.length;
         turnLoop:
         for (const turnKey in turnMaps) {
             if(statesQueue[0].turn === turnKey) continue;
             for (let i = 0; i < 3; i++) {
-                let turnsList = []
-                let currentNode = statesQueue[0]
-                // Check if position is already om solved state before adding turns
-                while(true) {
-                    turnsList.push(currentNode);
-                    currentNode = resolvedQueue[currentNode.index];
-                    if(currentNode.index < 0) break;
-                }
-                let stateCopy = JSON.parse(JSON.stringify(state));
-                turnsList.reverse().map(node => {
-                 //   console.log(JSON.parse(JSON.stringify(stateCopy)), node)
-                    stateCopy = turnWithMap(stateCopy, turnMaps[node.turn], node.amount);
-                });
+                let {stateCopy, turnsList} = convertNodeToState(statesQueue[0], JSON.parse(JSON.stringify(state)), resolvedQueue);
                 if (JSON.stringify(stateCopy) === JSON.stringify(solvedState)) {
-                    console.log("found")
-                    console.log(JSON.parse(JSON.stringify(turnsList)));
-                    console.log(resolvedQueue)
-                    solvedStateFound = true;
+                    console.log("found regular")
+                    console.log(turnsList);
+                   // console.log(resolvedQueue)
+                    //solvedStateFound = true;
                     break turnLoop;
                 }
                 statesQueue.push({turn: turnKey, amount: i+1, index: referenceIndex});
             }
         }
-        resolvedQueue.push(statesQueue.shift())
+        turnLoopBackwards:
+        for (const turnKey in turnMaps) {
+            if(statesQueueBackwards[0].turn === turnKey) continue;
+            for (let i = 0; i < 3; i++) {
+                let {stateCopy, turnsList} = convertNodeToState(statesQueueBackwards[0], solvedState, resolvedQueueBackwards);
+                if (JSON.stringify(stateCopy) === JSON.stringify(state)) {
+                    console.log("found reversed")
+                    console.log(turnsList);
+                   // console.log(resolvedQueueBackwards)
+                    //solvedStateFound = true;
+                    break turnLoopBackwards;
+                }
+                statesQueueBackwards.push({turn: turnKey, amount: i+1, index: referenceIndex});
+            }
+        }
+        resolvedQueue.push(statesQueue.shift());
+        resolvedQueueBackwards.push(statesQueueBackwards.shift());
     }
+}
+
+function convertNodeToState(node, stateCopy, queue) {
+    let turnsList = []
+    // Check if position is already om solved state before adding turns
+    while(true) {
+        turnsList.push(node);
+        node = queue[node.index];
+        if(node.index < 0) break;
+    }
+    turnsList.reverse().map(node => stateCopy = turnWithMap(stateCopy, turnMaps[node.turn], node.amount));
+    return {stateCopy, turnsList}
 }
 export {createCubeState, colorMap, turnWithMap, generateRandomState, solveState}
