@@ -137,6 +137,16 @@ function solveState(state) {
                     //solvedStateFound = true;
                     break turnLoop;
                 }
+                resolvedQueueBackwards.map((backwardsNode, index) => {
+                    if (index === 0) return;
+                    let {stateCopy: backwardsCopy, turnsList: turnsListBackwards} = convertNodeToState(backwardsNode, solvedState, resolvedQueueBackwards)
+                    if(JSON.stringify(stateCopy) === JSON.stringify(backwardsCopy)) {
+                        let finalPath = [...turnsList, ...turnsListBackwards.map((turn) => ({amount: turn.amount === 2 ? 2 : (turn.amount + 2) % 4, turn: turn.turn}))];
+                        console.log(turnsList, turnsListBackwards)
+                        console.log(finalPath)
+                        solvedStateFound = true;
+                    }
+                })
                 statesQueue.push({turn: turnKey, amount: i+1, index: referenceIndex});
             }
         }
