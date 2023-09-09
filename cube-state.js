@@ -106,7 +106,7 @@ function generateRandomState(state) {
     return state;
 }
 
-function solveState(state) {
+function generateSolutionToState(state) {
     let solvedState = createCubeState();
     let statesQueue = [];
     let statesQueueBackwards = []
@@ -115,6 +115,7 @@ function solveState(state) {
     resolvedQueue.push({turn: null,amount: 0, index: -1});
     resolvedQueueBackwards.push({turn: null,amount: 0, index: -1});
     let solvedStateFound = false;
+    let solution = [];
 
     for (const turnKey in turnMaps) {
         for (let i = 0; i < 3; i++) {
@@ -132,18 +133,17 @@ function solveState(state) {
                 let {stateCopy, turnsList} = convertNodeToState(statesQueue[0], JSON.parse(JSON.stringify(state)), resolvedQueue);
                 if (JSON.stringify(stateCopy) === JSON.stringify(solvedState)) {
                     console.log("found regular")
-                    console.log(turnsList);
-                   // console.log(resolvedQueue)
-                    //solvedStateFound = true;
+                    solution = turnsList;
+                    solvedStateFound = true;
                     break turnLoop;
                 }
                 resolvedQueueBackwards.map((backwardsNode, index) => {
-                    if (index === 0) return;
+                    if (index === 0 || solvedStateFound) return;
                     let {stateCopy: backwardsCopy, turnsList: turnsListBackwards} = convertNodeToState(backwardsNode, solvedState, resolvedQueueBackwards)
                     if(JSON.stringify(stateCopy) === JSON.stringify(backwardsCopy)) {
-                        let finalPath = [...turnsList, ...turnsListBackwards.map((turn) => ({amount: turn.amount === 2 ? 2 : (turn.amount + 2) % 4, turn: turn.turn}))];
+                        let finalPath = [...turnsList, ...turnsListBackwards.map((turn) => ({turn: turn.turn, amount: turn.amount === 2 ? 2 : (turn.amount + 2) % 4}))];
                         console.log(turnsList, turnsListBackwards)
-                        console.log(finalPath)
+                        solution = finalPath;
                         solvedStateFound = true;
                     }
                 })
@@ -157,9 +157,8 @@ function solveState(state) {
                 let {stateCopy, turnsList} = convertNodeToState(statesQueueBackwards[0], solvedState, resolvedQueueBackwards);
                 if (JSON.stringify(stateCopy) === JSON.stringify(state)) {
                     console.log("found reversed")
-                    console.log(turnsList);
-                   // console.log(resolvedQueueBackwards)
-                    //solvedStateFound = true;
+                    solution = turnsList;
+                    solvedStateFound = true;
                     break turnLoopBackwards;
                 }
                 statesQueueBackwards.push({turn: turnKey, amount: i+1, index: referenceIndex});
@@ -168,6 +167,14 @@ function solveState(state) {
         resolvedQueue.push(statesQueue.shift());
         resolvedQueueBackwards.push(statesQueueBackwards.shift());
     }
+    return solution;
+}
+
+function solveState(state, colorCube) {
+    generateSolutionToState(state).map(turn => {
+        turnWithMap(state, turnMaps[turn.turn], turn.amount);
+        colorCube(state)
+    })
 }
 
 function convertNodeToState(node, stateCopy, queue) {
@@ -181,4 +188,4 @@ function convertNodeToState(node, stateCopy, queue) {
     turnsList.reverse().map(node => stateCopy = turnWithMap(stateCopy, turnMaps[node.turn], node.amount));
     return {stateCopy, turnsList}
 }
-export {createCubeState, colorMap, turnWithMap, generateRandomState, solveState}
+export {createCubeState, colorMap, turnWithMap, generateRandomState, generateSolutionToState, solveState}
