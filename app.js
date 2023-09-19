@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createCubeState, colorMap, turnWithMap, generateRandomState, generateSolutionToState, solveState } from './cube-state';
-import turnMaps from './turnMaps';
+import { createCubeState, colorMap, generateRandomState, generateSolutionToState, solveState } from './cube-state';
 const solveButton = document.querySelector('button');
-solveButton.addEventListener('click', () => solveState(cubeState, recolorCube))
+solveButton.addEventListener('click', () => solveState(cubeState, reColorCube))
 let cubeState = createCubeState();
 
 cubeState = generateRandomState(cubeState)
@@ -89,8 +88,11 @@ function createCube(solvedState) {
     return cube;
 }
 
-function recolorCube(state) {
+function reColorCube(state) {
     console.log('executed', cube)
     let flattenedState = state.flat(3);
-    return flattenedState.forEach((cell, index) => cube.setColorAt(index, new THREE.Color(colorMap[cell])));
+    return flattenedState.forEach((cell, index) =>{
+         cube.setColorAt(index, new THREE.Color(colorMap[cell]));
+         cube.instanceColor.needsUpdate = true;
+    });
 }
