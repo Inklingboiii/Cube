@@ -172,7 +172,8 @@ function generateSolutionToState(state) {
 
 function solveState(state, colorCube) {
     generateSolutionToState(state).map(turn => {
-        colorCube(turnWithMap(state, turnMaps[turn.turn], turn.amount));
+        state = turnWithMap(state, turnMaps[turn.turn], turn.amount)
+        colorCube(state);
     })
 }
 
