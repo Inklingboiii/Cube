@@ -171,10 +171,19 @@ function generateSolutionToState(state) {
 }
 
 function solveState(state, colorCube) {
-    generateSolutionToState(state).map(turn => {
+    let index = 0;
+    let solution = generateSolutionToState(state);
+    let interval = setInterval(() => {
+        if(index >= solution.length) return clearInterval(interval);
+        let turn = solution[index];
         state = turnWithMap(state, turnMaps[turn.turn], turn.amount)
         colorCube(state);
-    })
+        index++;
+    }, 3000);
+    /*generateSolutionToState(state).map(turn => {
+        state = turnWithMap(state, turnMaps[turn.turn], turn.amount)
+        colorCube(state);
+    })*/
 }
 
 function convertNodeToState(node, stateCopy, queue) {
