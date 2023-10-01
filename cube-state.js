@@ -96,7 +96,7 @@ function generateRandomState(state) {
     // https://stackoverflow.com/questions/2532218/pick-random-property-from-a-javascript-object
     let possibleTurns = Object.keys(turnMaps);
     let turnsList = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
         let turnKey = possibleTurns[Math.floor(possibleTurns.length * Math.random())];
         let amount = Math.floor(Math.random() * 3) + 1;
         state = turnWithMap(state, turnMaps[turnKey], amount)
@@ -123,7 +123,7 @@ function generateSolutionToState(state) {
             statesQueueBackwards.push({turn: turnKey, amount: i+1, index: 0});
         }
     }
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 50000; i++) {
         if(solvedStateFound) break;
         const referenceIndex = resolvedQueue.length;
         turnLoop:
@@ -141,7 +141,7 @@ function generateSolutionToState(state) {
                     if (index === 0 || solvedStateFound) return;
                     let {stateCopy: backwardsCopy, turnsList: turnsListBackwards} = convertNodeToState(backwardsNode, solvedState, resolvedQueueBackwards)
                     if(JSON.stringify(stateCopy) === JSON.stringify(backwardsCopy)) {
-                        let finalPath = [...turnsList, ...turnsListBackwards.map((turn) => ({turn: turn.turn, amount: turn.amount === 2 ? 2 : (turn.amount + 2) % 4}))];
+                        let finalPath = [...turnsList, ...turnsListBackwards.map((turn) => ({turn: turn.turn, amount: turn.amount === 2 ? 2 : (turn.amount + 2) % 4})).reverse()];
                         console.log(turnsList, turnsListBackwards)
                         solution = finalPath;
                         solvedStateFound = true;
@@ -179,11 +179,7 @@ function solveState(state, colorCube) {
         state = turnWithMap(state, turnMaps[turn.turn], turn.amount)
         colorCube(state);
         index++;
-    }, 3000);
-    /*generateSolutionToState(state).map(turn => {
-        state = turnWithMap(state, turnMaps[turn.turn], turn.amount)
-        colorCube(state);
-    })*/
+    }, 1000);
 }
 
 function convertNodeToState(node, stateCopy, queue) {
